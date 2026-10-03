@@ -1,6 +1,10 @@
 import fs from 'fs';
 
 const readDatabase = (filePath) => new Promise((resolve, reject) => {
+  if (!filePath) {
+    reject(new Error('Cannot load the database'));
+    return;
+  }
   fs.readFile(filePath, 'utf-8', (err, data) => {
     if (err) {
       reject(new Error('Cannot load the database'));
@@ -18,13 +22,15 @@ const readDatabase = (filePath) => new Promise((resolve, reject) => {
 
     students.forEach((student) => {
       const parts = student.split(',');
-      const firstname = parts[0];
-      const field = parts[3];
+      if (parts.length >= 4) {
+        const firstname = parts[0].trim();
+        const field = parts[3].trim();
 
-      if (!fields[field]) {
-        fields[field] = [];
+        if (!fields[field]) {
+          fields[field] = [];
+        }
+        fields[field].push(firstname);
       }
-      fields[field].push(firstname);
     });
 
     resolve(fields);
