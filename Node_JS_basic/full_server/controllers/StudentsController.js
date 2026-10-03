@@ -2,10 +2,11 @@ import readDatabase from '../utils';
 
 class StudentsController {
   static getAllStudents(request, response) {
-    readDatabase(process.argv[2])
+    const dataPath = process.argv[2] || '';
+    readDatabase(dataPath)
       .then((fields) => {
         const output = ['This is the list of our students'];
-        const sortedFields = Object.keys(fields).sort((a, b) => a.localeCompare(b, 'en', { sensitivity: 'base' }));
+        const sortedFields = Object.keys(fields).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
 
         for (const field of sortedFields) {
           output.push(`Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}`);
@@ -19,6 +20,7 @@ class StudentsController {
   }
 
   static getAllStudentsByMajor(request, response) {
+    const dataPath = process.argv[2] || '';
     const { major } = request.params;
 
     if (major !== 'CS' && major !== 'SWE') {
@@ -26,7 +28,7 @@ class StudentsController {
       return;
     }
 
-    readDatabase(process.argv[2])
+    readDatabase(dataPath)
       .then((fields) => {
         const students = fields[major] || [];
         response.status(200).send(`List: ${students.join(', ')}`);
@@ -38,3 +40,4 @@ class StudentsController {
 }
 
 export default StudentsController;
+module.exports = StudentsController;
