@@ -6,7 +6,7 @@ class StudentsController {
     readDatabase(dataPath)
       .then((fields) => {
         const output = ['This is the list of our students'];
-        const sortedFields = Object.keys(fields).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+        const sortedFields = Object.keys(fields).sort((a, b) => a.localeCompare(b, 'en', { sensitivity: 'base' }));
 
         for (const field of sortedFields) {
           output.push(`Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}`);
@@ -20,14 +20,14 @@ class StudentsController {
   }
 
   static getAllStudentsByMajor(request, response) {
-    const dataPath = process.argv[2] || '';
     const { major } = request.params;
 
     if (major !== 'CS' && major !== 'SWE') {
-      response.status(500).send('Major must be CS or SWE');
+      response.status(500).send('Major parameter must be CS or SWE');
       return;
     }
 
+    const dataPath = process.argv[2] || '';
     readDatabase(dataPath)
       .then((fields) => {
         const students = fields[major] || [];
